@@ -10,7 +10,7 @@ class CategoryDetector
 public:
     virtual ~CategoryDetector() {}
 
-    virtual bool detect(Transaction *transaction) const = 0;
+    virtual bool detect(Transaction &transaction) const = 0;
 };
 }
 

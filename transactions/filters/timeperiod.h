@@ -14,7 +14,7 @@ class TimePeriod : public Filter
 public:
     TimePeriod(const QDate &start, const QDate &end);
 
-    virtual bool isMatch(const Transaction *transaction) const;
+    virtual bool isMatch(const Transaction &transaction) const;
 
 private:
     QDate _start;

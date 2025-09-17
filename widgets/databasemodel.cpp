@@ -23,18 +23,18 @@ namespace Widgets
             {
                 if (index.column() < COLUMN_COUNT && index.row() < _database->size())
                 {
-                    const Transactions::Transaction *transaction = _database->transactionAt(index.row());
+                    const Transactions::Transaction transaction = _database->transactionAt(index.row());
                     switch (index.column()) {
                     case Id:
-                        return transaction->id();
+                        return transaction.id();
                     case Date:
-                        return transaction->dateTime();
+                        return transaction.dateTime();
                     case Amount:
-                        return transaction->amount();
+                        return transaction.amount();
                     case Category:
-                        return transaction->category();
+                        return transaction.category();
                     case Description:
-                        return transaction->description();
+                        return transaction.description();
                     default:
                         break;
                     }
@@ -52,7 +52,7 @@ namespace Widgets
         }
         if (column >=0 && row >= 0 && column < COLUMN_COUNT && row < _database->size())
         {
-            return createIndex(row, column, _database->transactionAt(row));
+            return createIndex(row, column, &_database->transactionAt(row));
         }
         return QModelIndex();
     }

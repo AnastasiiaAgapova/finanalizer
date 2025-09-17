@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::openDatabase()
 {
-    _database->setFileName("C:\\workspace\\finanalizer\\examples\\database.json");
+    _database->setFileName("..\\..\\examples\\database.json");
     _database->load();
     _model->setDatabase(_database);
 }

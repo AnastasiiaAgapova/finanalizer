@@ -35,11 +35,11 @@ bool Database::save() const
     for(const auto& transaction : _transactions)
     {
         QJsonObject transactionObject;
-        transactionObject.insert(ID_KEY, QJsonValue::fromVariant(transaction->id()));
-        transactionObject.insert(DATE_TIME_KEY, QJsonValue::fromVariant(transaction->dateTime().toString(DATE_TIME_FORMAT)));
-        transactionObject.insert(AMOUNT_KEY, QJsonValue::fromVariant(transaction->amount()));
-        transactionObject.insert(CATEGORY_KEY, QJsonValue::fromVariant(transaction->category()));
-        transactionObject.insert(DESCRIPTION_KEY, QJsonValue::fromVariant(transaction->description()));
+        transactionObject.insert(ID_KEY, QJsonValue::fromVariant(transaction.id()));
+        transactionObject.insert(DATE_TIME_KEY, QJsonValue::fromVariant(transaction.dateTime().toString(DATE_TIME_FORMAT)));
+        transactionObject.insert(AMOUNT_KEY, QJsonValue::fromVariant(transaction.amount()));
+        transactionObject.insert(CATEGORY_KEY, QJsonValue::fromVariant(transaction.category()));
+        transactionObject.insert(DESCRIPTION_KEY, QJsonValue::fromVariant(transaction.description()));
 
         transactionArray.append(QJsonValue(transactionObject));
     }
@@ -74,12 +74,12 @@ bool Database::load()
     for (const auto value : transactionsArray)
     {
         const QJsonObject jsonObject = value.toObject();
-        Transaction *transaction = new Transaction();
-        transaction->setId(jsonObject.value(ID_KEY).toInt());
-        transaction->setDateTime(QDateTime::fromString(jsonObject.value(DATE_TIME_KEY).toString(), DATE_TIME_FORMAT));
-        transaction->setAmount(jsonObject.value(AMOUNT_KEY).toInt());
-        transaction->setCategory(jsonObject.value(CATEGORY_KEY).toString());
-        transaction->setDescription(jsonObject.value(DESCRIPTION_KEY).toString());
+        Transaction transaction;
+        transaction.setId(jsonObject.value(ID_KEY).toInt());
+        transaction.setDateTime(QDateTime::fromString(jsonObject.value(DATE_TIME_KEY).toString(), DATE_TIME_FORMAT));
+        transaction.setAmount(jsonObject.value(AMOUNT_KEY).toInt());
+        transaction.setCategory(jsonObject.value(CATEGORY_KEY).toString());
+        transaction.setDescription(jsonObject.value(DESCRIPTION_KEY).toString());
         _transactions.append(transaction);
     }
     emit changed();
@@ -97,10 +97,11 @@ void Database::setFileName(const QString &newFileName)
     _fileName = newFileName;
 }
 
-void Database::addTransaction(Transaction *transaction)
+void Database::addTransaction(const Transaction &transaction)
 {
-    transaction->setId(_transactions.isEmpty() ? 1 : (_transactions.last()->id() + 1));
-    _transactions.append(transaction);
+    Transaction newTransaction = transaction;
+    newTransaction.setId(_transactions.isEmpty() ? 1 : (_transactions.last().id() + 1));
+    _transactions.append(newTransaction);
     emit changed();
 }
 
@@ -109,24 +110,19 @@ int Database::size() const
     return _transactions.size();
 }
 
-QList<const Transaction *> Database::transactions() const
+QList<Transaction> Database::transactions() const
 {
-    QList<const Transaction*> res;
-    for (const auto &transaction : _transactions)
-        res.append(transaction);
-    return res;
+    return _transactions;
 }
 
-const Transaction *Database::transactionAt(int index) const
+const Transaction &Database::transactionAt(int index) const
 {
-    if (index < 0 || index >= size())
-        return nullptr;
     return _transactions.at(index);
 }
 
-QList<const Transaction *> Database::filterTransactions(const Filter *filter) const
+QList<Transaction> Database::filterTransactions(const Filter *filter) const
 {
-    QList<const Transaction *> res;
+    QList<Transaction> res;
     foreach (auto &transaction, _transactions)
         if (filter->isMatch(transaction))
             res.append(transaction);
@@ -135,7 +131,6 @@ QList<const Transaction *> Database::filterTransactions(const Filter *filter) co
 
 void Database::clearDatabase()
 {
-    qDeleteAll(_transactions);
     _transactions.clear();
     emit changed();
 }

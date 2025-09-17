@@ -10,9 +10,9 @@ Category::Category(const QString &category)
 
 }
 
-bool Category::isMatch(const Transaction *transaction) const
+bool Category::isMatch(const Transaction &transaction) const
 {
-    return transaction->category() == _category;
+    return transaction.category() == _category;
 }
 }
 }

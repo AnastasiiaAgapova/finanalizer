@@ -12,7 +12,7 @@ class Category : public Filter
 public:
     Category(const QString &category);
 
-    virtual bool isMatch(const Transaction *transaction) const;
+    virtual bool isMatch(const Transaction &transaction) const;
 
 private:
     QString _category;

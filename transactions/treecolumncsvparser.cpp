@@ -11,9 +11,9 @@ TreeColumnCsvParser::TreeColumnCsvParser()
 
 }
 
-QList<Transaction *> TreeColumnCsvParser::load(const QString &connectionString) const
+QList<Transaction> TreeColumnCsvParser::load(const QString &connectionString) const
 {
-    QList<Transaction *> res;
+    QList<Transaction> res;
     QFile file(connectionString);
     if (file.open(QFile::ReadOnly))
     {
@@ -27,13 +27,13 @@ QList<Transaction *> TreeColumnCsvParser::load(const QString &connectionString) 
 
             line = textStream.readLine();
 
-            Transaction *transaction = new Transaction;
+            Transaction transaction;
             bool ok;
-            transaction->setAmount(stringList[2].toDouble(&ok) * 100);
+            transaction.setAmount(stringList[2].toDouble(&ok) * 100);
             if (!ok)
                 continue;
-            transaction->setDateTime(QDateTime::fromString(stringList[0], "dd/MM/yyyy"));
-            transaction->setDescription(stringList[1]);
+            transaction.setDateTime(QDateTime::fromString(stringList[0], "dd/MM/yyyy"));
+            transaction.setDescription(stringList[1]);
 
             if (_categoryDetector)
                 _categoryDetector->detect(transaction);

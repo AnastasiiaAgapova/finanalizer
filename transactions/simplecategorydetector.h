@@ -11,7 +11,7 @@ public:
     SimpleCategoryDetector();
     ~SimpleCategoryDetector();
 
-    bool detect(Transaction *transaction) const;
+    bool detect(Transaction &transaction) const;
 };
 }
 

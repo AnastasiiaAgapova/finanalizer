@@ -25,11 +25,11 @@ public:
     void setDescription(const QString &newDescription);
 
 private:
-    int _id; //is it needed?
+    int _id = 0; //is it needed?
     QDateTime _dateTime;
-    int _amount; // in minimal units e.g. pence
-    QString _category;
-    QString _description;
+    int _amount = 0; // in minimal units e.g. pence
+    QString _category = 0;
+    QString _description = 0;
 };
 }
 

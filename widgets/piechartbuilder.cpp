@@ -25,16 +25,16 @@ void PieChartBuilder::rebuild()
 {
     if (nullptr == _database || nullptr == _pieChart)
         return;
-    QList<const Transactions::Transaction *> transactions = _currentFilter ?
-                                                                _database->filterTransactions(_currentFilter)
-                                                                           : _database->transactions();
+    QList<Transactions::Transaction> transactions = _currentFilter
+                                                        ? _database->filterTransactions(_currentFilter)
+                                                        : _database->transactions();
     QMap<QString,int> categorySums;
     foreach (auto transaction, transactions)
     {
-        if (categorySums.contains(transaction->category()))
-            categorySums[transaction->category()] += transaction->amount();
+        if (categorySums.contains(transaction.category()))
+            categorySums[transaction.category()] += transaction.amount();
         else
-            categorySums.insert(transaction->category(), transaction->amount());
+            categorySums.insert(transaction.category(), transaction.amount());
     }
 
     _categorySeries->clear();

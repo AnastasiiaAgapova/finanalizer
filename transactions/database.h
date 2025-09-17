@@ -21,21 +21,14 @@ public:
     QString fileName() const;
     void setFileName(const QString &newFileName);
 
-    /**
-     * Adds a transaction to the database.
-     * The database takes ownership of the transaction pointer,
-     * and will delete it when the database is cleared or destroyed.
-     *
-     * @param transaction Pointer to the transaction. Must not be deleted by the caller.
-     */
-    void addTransaction(Transaction *transactions);
+    void addTransaction(const Transaction &transactions);
 
     int size() const;
 
-    QList<const Transaction *> transactions() const;
-    const Transaction *transactionAt(int index) const;
+    QList<Transaction> transactions() const;
+    const Transaction &transactionAt(int index) const;
 
-    QList<const Transaction *> filterTransactions(const Filter *filter) const;
+    QList<Transaction> filterTransactions(const Filter *filter) const;
 
 signals:
     void changed();
@@ -53,7 +46,7 @@ private:
     static const char* DATE_TIME_FORMAT;
 
 
-    QList<Transaction *> _transactions;
+    QList<Transaction> _transactions;
     QString _fileName;
 };
 
