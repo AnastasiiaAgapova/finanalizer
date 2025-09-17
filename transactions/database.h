@@ -21,7 +21,8 @@ public:
     QString fileName() const;
     void setFileName(const QString &newFileName);
 
-    void addTransaction(const Transaction &transactions);
+    void addTransaction(const Transaction &transaction);
+    void addTransactions(QList<Transaction> transactions);
 
     int size() const;
 
@@ -30,15 +31,18 @@ public:
 
     QList<Transaction> filterTransactions(const Filter *filter) const;
 
+    QDate startDate() const;
+    QDate endDate() const;
+
 signals:
     void changed();
 
 private:
     void clearDatabase();
+    void sortDatabase();
 
 private:
     static const char* TRANSACTIONS_KEY;
-    static const char* ID_KEY;
     static const char* DATE_TIME_KEY;
     static const char* AMOUNT_KEY;
     static const char* CATEGORY_KEY;

@@ -17,7 +17,7 @@ class PieChartBuilder : public QObject
     Q_OBJECT
 public:
     PieChartBuilder(Transactions::Database *database, PieChart *pieChart, QObject *parent = nullptr);
-    void setFilter(Transactions::Filter *filter);
+    void setFilter(std::unique_ptr<Transactions::Filter> filter);
 
 public slots:
     void rebuild();
@@ -25,7 +25,7 @@ public slots:
 private:
     Transactions::Database *_database;
     PieChart *_pieChart;
-    Transactions::Filter *_currentFilter = nullptr;
+    std::unique_ptr<Transactions::Filter> _currentFilter = nullptr;
     QPieSeries *_categorySeries;
 };
 }

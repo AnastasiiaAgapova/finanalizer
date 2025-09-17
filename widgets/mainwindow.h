@@ -7,6 +7,9 @@
 
 namespace Widgets
 {
+class PieChartBuilder;
+class DateRangeEdit;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -15,11 +18,18 @@ public:
 
 public slots:
     void openDatabase();
+
 signals:
+
+protected slots:
+    void onDateRangeChanged();
+    void onDatabaseChaned();
 
 private:
     DatabaseModel *_model;
     Transactions::Database *_database;
+    PieChartBuilder *_builder;
+    DateRangeEdit *_dateRangeEdit;
 };
 }
 

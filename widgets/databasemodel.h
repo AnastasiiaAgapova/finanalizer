@@ -14,8 +14,7 @@ class DatabaseModel : public QAbstractItemModel
 public:
     enum ColumnName
     {
-        Id = 0,
-        Date,
+        Date = 0,
         Amount,
         Category,
         Description,
@@ -32,6 +31,8 @@ public:
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &index) const;
+
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
     Transactions::Database *_database;

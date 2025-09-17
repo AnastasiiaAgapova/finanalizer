@@ -9,7 +9,6 @@ namespace Transactions
 {
 
 const char* Database::TRANSACTIONS_KEY = "transactions";
-const char* Database::ID_KEY = "id";
 const char* Database::DATE_TIME_KEY = "dateTime";
 const char* Database::AMOUNT_KEY = "amount";
 const char* Database::CATEGORY_KEY = "category";
@@ -35,7 +34,6 @@ bool Database::save() const
     for(const auto& transaction : _transactions)
     {
         QJsonObject transactionObject;
-        transactionObject.insert(ID_KEY, QJsonValue::fromVariant(transaction.id()));
         transactionObject.insert(DATE_TIME_KEY, QJsonValue::fromVariant(transaction.dateTime().toString(DATE_TIME_FORMAT)));
         transactionObject.insert(AMOUNT_KEY, QJsonValue::fromVariant(transaction.amount()));
         transactionObject.insert(CATEGORY_KEY, QJsonValue::fromVariant(transaction.category()));
@@ -75,7 +73,6 @@ bool Database::load()
     {
         const QJsonObject jsonObject = value.toObject();
         Transaction transaction;
-        transaction.setId(jsonObject.value(ID_KEY).toInt());
         transaction.setDateTime(QDateTime::fromString(jsonObject.value(DATE_TIME_KEY).toString(), DATE_TIME_FORMAT));
         transaction.setAmount(jsonObject.value(AMOUNT_KEY).toInt());
         transaction.setCategory(jsonObject.value(CATEGORY_KEY).toString());
@@ -99,9 +96,15 @@ void Database::setFileName(const QString &newFileName)
 
 void Database::addTransaction(const Transaction &transaction)
 {
-    Transaction newTransaction = transaction;
-    newTransaction.setId(_transactions.isEmpty() ? 1 : (_transactions.last().id() + 1));
-    _transactions.append(newTransaction);
+    _transactions.append(transaction);
+    sortDatabase();
+    emit changed();
+}
+
+void Database::addTransactions(QList<Transaction> transactions)
+{
+    _transactions.append(transactions);
+    sortDatabase();
     emit changed();
 }
 
@@ -129,9 +132,32 @@ QList<Transaction> Database::filterTransactions(const Filter *filter) const
     return res;
 }
 
+QDate Database::startDate() const
+{
+    if (_transactions.empty())
+        return QDate();
+    else
+        return _transactions.first().dateTime().date();
+}
+
+QDate Database::endDate() const
+{
+    if (_transactions.empty())
+        return QDate();
+    else
+        return _transactions.last().dateTime().date();
+}
+
 void Database::clearDatabase()
 {
     _transactions.clear();
     emit changed();
+}
+
+void Database::sortDatabase()
+{
+    std::sort(_transactions.begin(), _transactions.end(), [](const Transaction &a, const Transaction &b){
+        return a.dateTime() < b.dateTime();
+    });
 }
 }

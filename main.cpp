@@ -11,12 +11,11 @@ int main(int argc, char *argv[])
     {
         // Transactions::TreeColumnCsvParser parser;
         // parser.setCategoryDetector(new Transactions::SimpleCategoryDetector());
-        // QList<Transactions::Transaction *> transactions = parser.load("C:\\workspace\\finanalizer\\examples\\expenses_2024.csv");
+        // QList<Transactions::Transaction> transactions = parser.load("C:\\workspace\\finanalizer\\examples\\expenses_2024.csv");
 
         // Transactions::Database db;
         // db.setFileName("C:\\workspace\\finanalizer\\examples\\database.json");
-        // foreach(auto transaction, transactions)
-        //     db.addTransaction(transaction);
+        // db.addTransactions(transactions);
         // qDebug() << db.save();
 
         // Transactions::Database db;
@@ -27,7 +26,7 @@ int main(int argc, char *argv[])
         //              << transaction.dateTime() << " "
         //              << transaction.amount() << " "
         //              << transaction.category() << " "
-        //              << transaction.description();
+                     // << transaction.description();
     }
     QApplication a(argc, argv);
 

@@ -9,8 +9,6 @@ class Transaction
 {
 public:
     Transaction();
-    int id() const;
-    void setId(int newId);
 
     QDateTime dateTime() const;
     void setDateTime(const QDateTime &newDateTime);
@@ -25,7 +23,6 @@ public:
     void setDescription(const QString &newDescription);
 
 private:
-    int _id = 0; //is it needed?
     QDateTime _dateTime;
     int _amount = 0; // in minimal units e.g. pence
     QString _category = 0;

@@ -4,16 +4,6 @@ namespace Transactions
 {
 Transaction::Transaction() {}
 
-int Transaction::id() const
-{
-    return _id;
-}
-
-void Transaction::setId(int newId)
-{
-    _id = newId;
-}
-
 QDateTime Transaction::dateTime() const
 {
     return _dateTime;

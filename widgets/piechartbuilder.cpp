@@ -15,9 +15,9 @@ PieChartBuilder::PieChartBuilder(Transactions::Database *database, PieChart *pie
     connect(_database, &Transactions::Database::changed, this, &PieChartBuilder::rebuild);
 }
 
-void PieChartBuilder::setFilter(Transactions::Filter *filter)
+void PieChartBuilder::setFilter(std::unique_ptr<Transactions::Filter> filter)
 {
-    _currentFilter = filter;
+    _currentFilter = std::move(filter);
     rebuild();
 }
 
@@ -26,7 +26,7 @@ void PieChartBuilder::rebuild()
     if (nullptr == _database || nullptr == _pieChart)
         return;
     QList<Transactions::Transaction> transactions = _currentFilter
-                                                        ? _database->filterTransactions(_currentFilter)
+                                                        ? _database->filterTransactions(_currentFilter.get())
                                                         : _database->transactions();
     QMap<QString,int> categorySums;
     foreach (auto transaction, transactions)

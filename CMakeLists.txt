@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Charts)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Charts)
 
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
 add_executable(finanalizer
   main.cpp
   transactions/transaction.h transactions/transaction.cpp
@@ -28,6 +30,7 @@ add_executable(finanalizer
   widgets/piechart.h widgets/piechart.cpp
   widgets/namedpieslice.h widgets/namedpieslice.cpp
   widgets/piechartbuilder.h widgets/piechartbuilder.cpp
+  widgets/daterangeedit.h widgets/daterangeedit.cpp
 
 )
 
@@ -35,6 +38,7 @@ target_include_directories(finanalizer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(finanalizer PRIVATE Qt${QT_VERSION_MAJOR}::Core
                                           Qt${QT_VERSION_MAJOR}::Widgets
                                           Qt${QT_VERSION_MAJOR}::Charts)
+target_link_libraries(finanalizer PRIVATE Qt6::Widgets)
 
 include(GNUInstallDirs)
 install(TARGETS finanalizer

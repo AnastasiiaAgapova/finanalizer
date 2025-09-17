@@ -25,12 +25,10 @@ namespace Widgets
                 {
                     const Transactions::Transaction transaction = _database->transactionAt(index.row());
                     switch (index.column()) {
-                    case Id:
-                        return transaction.id();
                     case Date:
-                        return transaction.dateTime();
+                        return transaction.dateTime().date();
                     case Amount:
-                        return transaction.amount();
+                        return transaction.amount() * 0.01;
                     case Category:
                         return transaction.category();
                     case Description:
@@ -68,6 +66,22 @@ namespace Widgets
     QModelIndex DatabaseModel::parent(const QModelIndex &index) const
     {
         return QModelIndex();
+    }
+
+    QVariant DatabaseModel::headerData(int section, Qt::Orientation orientation, int role) const
+    {
+        if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
+        {
+            if (section == Date)
+                return "Date";
+            else if (section == Amount)
+                return "Amount";
+            else if (section == Category)
+                return "Category";
+            else if (section == Description)
+                return "Description";
+        }
+        return QVariant();
     }
 
     void DatabaseModel::setDatabase(Transactions::Database *newDatabase)
