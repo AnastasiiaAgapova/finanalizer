@@ -10,11 +10,10 @@ namespace Transactions
 {
 class Database : public QObject
 {
+    Q_OBJECT
 public:
     Database(QObject *parent = nullptr);
     ~Database();
-
-    void addTransactions(const Transaction &transaction);
 
     bool save() const;
     bool load();
@@ -36,8 +35,10 @@ public:
     QList<const Transaction *> transactions() const;
     const Transaction *transactionAt(int index) const;
 
-    QList<const Transaction *> filterTransactions(const Filter &filter) const;
+    QList<const Transaction *> filterTransactions(const Filter *filter) const;
 
+signals:
+    void changed();
 
 private:
     void clearDatabase();

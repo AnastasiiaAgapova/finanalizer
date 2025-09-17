@@ -12,7 +12,7 @@ public:
     TreeColumnCsvParser();
     ~TreeColumnCsvParser(){}
 
-    QList<Transaction> load(const QString &connectionString) const;
+    QList<Transaction *> load(const QString &connectionString) const;
 
     void setCategoryDetector(CategoryDetector *newCategoryDetector);
 

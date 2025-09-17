@@ -19,6 +19,7 @@ signals:
 
 private:
     DatabaseModel *_model;
+    Transactions::Database *_database;
 };
 }
 

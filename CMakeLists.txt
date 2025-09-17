@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Charts)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Charts)
 
 add_executable(finanalizer
   main.cpp
@@ -25,10 +25,16 @@ add_executable(finanalizer
   transactions/filter.h
   transactions/filters/timeperiod.h transactions/filters/timeperiod.cpp
   transactions/filters/category.h transactions/filters/category.cpp
+  widgets/piechart.h widgets/piechart.cpp
+  widgets/namedpieslice.h widgets/namedpieslice.cpp
+  widgets/piechartbuilder.h widgets/piechartbuilder.cpp
+
 )
 
 target_include_directories(finanalizer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(finanalizer PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(finanalizer PRIVATE Qt${QT_VERSION_MAJOR}::Core
+                                          Qt${QT_VERSION_MAJOR}::Widgets
+                                          Qt${QT_VERSION_MAJOR}::Charts)
 
 include(GNUInstallDirs)
 install(TARGETS finanalizer

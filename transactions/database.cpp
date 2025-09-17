@@ -48,6 +48,7 @@ bool Database::save() const
 
     file.write(QJsonDocument(databaseObject).toJson());
     file.close();
+
     return true;
 }
 
@@ -81,6 +82,7 @@ bool Database::load()
         transaction->setDescription(jsonObject.value(DESCRIPTION_KEY).toString());
         _transactions.append(transaction);
     }
+    emit changed();
     return true;
 
 }
@@ -99,6 +101,7 @@ void Database::addTransaction(Transaction *transaction)
 {
     transaction->setId(_transactions.isEmpty() ? 1 : (_transactions.last()->id() + 1));
     _transactions.append(transaction);
+    emit changed();
 }
 
 int Database::size() const
@@ -121,11 +124,11 @@ const Transaction *Database::transactionAt(int index) const
     return _transactions.at(index);
 }
 
-QList<const Transaction *> Database::filterTransactions(const Filter &filter) const
+QList<const Transaction *> Database::filterTransactions(const Filter *filter) const
 {
     QList<const Transaction *> res;
     foreach (auto &transaction, _transactions)
-        if (filter.isMatch(transaction))
+        if (filter->isMatch(transaction))
             res.append(transaction);
     return res;
 }
@@ -134,5 +137,6 @@ void Database::clearDatabase()
 {
     qDeleteAll(_transactions);
     _transactions.clear();
+    emit changed();
 }
 }
