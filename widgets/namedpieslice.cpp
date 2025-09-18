@@ -8,8 +8,8 @@ NamedPieSlice::NamedPieSlice(int value, const QString &name)
 {
     setValue(value * 0.01);
     updateLabel();
-    connect(this, &NamedPieSlice::percentageChanged, this, &NamedPieSlice::updateLabel);
-    connect(this, &NamedPieSlice::hovered, this, &NamedPieSlice::showHighlight);
+    QObject::connect(this, &NamedPieSlice::percentageChanged, this, &NamedPieSlice::updateLabel);
+    QObject::connect(this, &NamedPieSlice::hovered, this, &NamedPieSlice::showHighlight);
 }
 
 void NamedPieSlice::updateLabel()

@@ -8,13 +8,20 @@ namespace Transactions
 class Transaction
 {
 public:
+    enum Type
+    {
+        INVALID = -1,
+        INCOME,
+        OUTCOME
+    };
+
     Transaction();
 
     QDateTime dateTime() const;
     void setDateTime(const QDateTime &newDateTime);
 
-    int amount() const;
-    void setAmount(int newAmount);
+    uint amount() const;
+    void setAmount(uint newAmount);
 
     QString category() const;
     void setCategory(const QString &newCategory);
@@ -22,11 +29,16 @@ public:
     QString description() const;
     void setDescription(const QString &newDescription);
 
+
+    Type type() const;
+    void setType(Type newType);
+
 private:
     QDateTime _dateTime;
-    int _amount = 0; // in minimal units e.g. pence
+    uint _amount = 0; // in minimal units e.g. pence
     QString _category = 0;
     QString _description = 0;
+    Type _type = INVALID;
 };
 }
 

@@ -34,6 +34,9 @@ public:
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+protected slots:
+    void onDatabaseChanged();
+
 private:
     Transactions::Database *_database;
 };

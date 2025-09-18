@@ -14,12 +14,12 @@ void Transaction::setDateTime(const QDateTime &newDateTime)
     _dateTime = newDateTime;
 }
 
-int Transaction::amount() const
+uint Transaction::amount() const
 {
     return _amount;
 }
 
-void Transaction::setAmount(int newAmount)
+void Transaction::setAmount(uint newAmount)
 {
     _amount = newAmount;
 }
@@ -42,5 +42,15 @@ QString Transaction::description() const
 void Transaction::setDescription(const QString &newDescription)
 {
     _description = newDescription;
+}
+
+Transaction::Type Transaction::type() const
+{
+    return _type;
+}
+
+void Transaction::setType(Type newType)
+{
+    _type = newType;
 }
 }

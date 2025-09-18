@@ -18,7 +18,7 @@ add_executable(finanalizer
   main.cpp
   transactions/transaction.h transactions/transaction.cpp
   transactions/connector.h
-  transactions/treecolumncsvparser.h transactions/treecolumncsvparser.cpp
+  transactions/threecolumncsvparser.h transactions/threecolumncsvparser.cpp
   transactions/categorydetector.h
   transactions/simplecategorydetector.h transactions/simplecategorydetector.cpp
   transactions/database.h transactions/database.cpp
@@ -31,6 +31,8 @@ add_executable(finanalizer
   widgets/namedpieslice.h widgets/namedpieslice.cpp
   widgets/piechartbuilder.h widgets/piechartbuilder.cpp
   widgets/daterangeedit.h widgets/daterangeedit.cpp
+  appconfig.h appconfig.cpp
+  transactions/databasestorage.h transactions/databasestorage.cpp
 
 )
 

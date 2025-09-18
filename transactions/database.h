@@ -15,12 +15,6 @@ public:
     Database(QObject *parent = nullptr);
     ~Database();
 
-    bool save() const;
-    bool load();
-
-    QString fileName() const;
-    void setFileName(const QString &newFileName);
-
     void addTransaction(const Transaction &transaction);
     void addTransactions(QList<Transaction> transactions);
 
@@ -34,24 +28,14 @@ public:
     QDate startDate() const;
     QDate endDate() const;
 
+    void clearDatabase();
+    void sortDatabase();
+
 signals:
     void changed();
 
 private:
-    void clearDatabase();
-    void sortDatabase();
-
-private:
-    static const char* TRANSACTIONS_KEY;
-    static const char* DATE_TIME_KEY;
-    static const char* AMOUNT_KEY;
-    static const char* CATEGORY_KEY;
-    static const char* DESCRIPTION_KEY;
-    static const char* DATE_TIME_FORMAT;
-
-
     QList<Transaction> _transactions;
-    QString _fileName;
 };
 
 }

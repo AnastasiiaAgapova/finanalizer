@@ -1,16 +1,16 @@
-#ifndef TREECOLUMNCSVPARSER_H
-#define TREECOLUMNCSVPARSER_H
+#ifndef THREECOLUMNCSVPARSER_H
+#define THREECOLUMNCSVPARSER_H
 
 #include "categorydetector.h"
 #include "connector.h"
 
 namespace Transactions
 {
-class TreeColumnCsvParser : public Connector
+class ThreeColumnCsvParser : public Connector
 {
 public:
-    TreeColumnCsvParser();
-    ~TreeColumnCsvParser(){}
+    ThreeColumnCsvParser();
+    ~ThreeColumnCsvParser(){}
 
     QList<Transaction> load(const QString &connectionString) const;
 
@@ -21,4 +21,4 @@ private:
 };
 }
 
-#endif // TREECOLUMNCSVPARSER_H
+#endif // THREECOLUMNCSVPARSER_H

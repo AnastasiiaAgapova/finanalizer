@@ -21,8 +21,8 @@ DateRangeEdit::DateRangeEdit(QWidget *parent)
     mainLayout->addWidget(new QLabel("to", this));
     mainLayout->addWidget(_endDateEdit);
 
-    connect(_startDateEdit, &QDateEdit::dateChanged, this, &DateRangeEdit::dateRangeChanged);
-    connect(_endDateEdit, &QDateEdit::dateChanged, this, &DateRangeEdit::dateRangeChanged);
+    QObject::connect(_startDateEdit, &QDateEdit::dateChanged, this, &DateRangeEdit::dateRangeChanged);
+    QObject::connect(_endDateEdit, &QDateEdit::dateChanged, this, &DateRangeEdit::dateRangeChanged);
 }
 
 void DateRangeEdit::setMaxDateRange(const QDate &minDate, const QDate &maxDate)

@@ -1,17 +1,17 @@
-#include "treecolumncsvparser.h"
+#include "threecolumncsvparser.h"
 
 #include <QFile>
 #include <QTextStream>
 
 namespace Transactions
 {
-TreeColumnCsvParser::TreeColumnCsvParser()
+ThreeColumnCsvParser::ThreeColumnCsvParser()
         : _categoryDetector(nullptr)
 {
 
 }
 
-QList<Transaction> TreeColumnCsvParser::load(const QString &connectionString) const
+QList<Transaction> ThreeColumnCsvParser::load(const QString &connectionString) const
 {
     QList<Transaction> res;
     QFile file(connectionString);
@@ -29,7 +29,9 @@ QList<Transaction> TreeColumnCsvParser::load(const QString &connectionString) co
 
             Transaction transaction;
             bool ok;
-            transaction.setAmount(stringList[2].toDouble(&ok) * 100);
+            double amount = stringList[2].toDouble(&ok);
+            transaction.setType(amount < 0 ? Transaction::OUTCOME : Transaction::INCOME);
+            transaction.setAmount(abs(amount) * 100);
             if (!ok)
                 continue;
             transaction.setDateTime(QDateTime::fromString(stringList[0], "dd/MM/yyyy"));
@@ -44,7 +46,7 @@ QList<Transaction> TreeColumnCsvParser::load(const QString &connectionString) co
     return res;
 }
 
-void TreeColumnCsvParser::setCategoryDetector(CategoryDetector *newCategoryDetector)
+void ThreeColumnCsvParser::setCategoryDetector(CategoryDetector *newCategoryDetector)
 {
     _categoryDetector = newCategoryDetector;
 }

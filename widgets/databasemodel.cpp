@@ -28,7 +28,7 @@ namespace Widgets
                     case Date:
                         return transaction.dateTime().date();
                     case Amount:
-                        return transaction.amount() * 0.01;
+                        return QString::number(transaction.amount() * 0.01, 'f', 2);
                     case Category:
                         return transaction.category();
                     case Description:
@@ -84,11 +84,21 @@ namespace Widgets
         return QVariant();
     }
 
+    void DatabaseModel::onDatabaseChanged()
+    {
+        beginResetModel();
+        endResetModel();
+    }
+
     void DatabaseModel::setDatabase(Transactions::Database *newDatabase)
     {
+        if (_database)
+            QObject::disconnect(_database, nullptr, nullptr, nullptr);
         beginResetModel();
         _database = newDatabase;
         endResetModel();
+
+        QObject::connect(_database, &Transactions::Database::changed, this, &DatabaseModel::onDatabaseChanged);
     }
 
 }

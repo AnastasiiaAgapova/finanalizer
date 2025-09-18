@@ -16,12 +16,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-public slots:
-    void openDatabase();
-
 signals:
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 protected slots:
+    void openDatabase();
+    void addData();
     void onDateRangeChanged();
     void onDatabaseChaned();
 

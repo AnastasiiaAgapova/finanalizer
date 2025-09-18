@@ -12,7 +12,7 @@ PieChartBuilder::PieChartBuilder(Transactions::Database *database, PieChart *pie
     , _pieChart(pieChart)
     , _categorySeries(new QPieSeries(this))
 {
-    connect(_database, &Transactions::Database::changed, this, &PieChartBuilder::rebuild);
+    QObject::connect(_database, &Transactions::Database::changed, this, &PieChartBuilder::rebuild);
 }
 
 void PieChartBuilder::setFilter(std::unique_ptr<Transactions::Filter> filter)

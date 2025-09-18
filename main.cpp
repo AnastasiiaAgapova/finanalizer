@@ -1,33 +1,9 @@
 #include <QApplication>
 
-// #include "transactions/treecolumncsvparser.h"
-// #include "transactions/database.h"
-// #include "transactions/simplecategorydetector.h"
 #include "widgets/mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    if (argc > 1)
-    {
-        // Transactions::TreeColumnCsvParser parser;
-        // parser.setCategoryDetector(new Transactions::SimpleCategoryDetector());
-        // QList<Transactions::Transaction> transactions = parser.load("C:\\workspace\\finanalizer\\examples\\expenses_2024.csv");
-
-        // Transactions::Database db;
-        // db.setFileName("C:\\workspace\\finanalizer\\examples\\database.json");
-        // db.addTransactions(transactions);
-        // qDebug() << db.save();
-
-        // Transactions::Database db;
-        // db.setFileName("C:\\workspace\\finanalizer\\examples\\database.json");
-        // db.load();
-        // for (auto transaction : db.transactions())
-        //     qDebug() << transaction.id() << " "
-        //              << transaction.dateTime() << " "
-        //              << transaction.amount() << " "
-        //              << transaction.category() << " "
-                     // << transaction.description();
-    }
     QApplication a(argc, argv);
 
     Widgets::MainWindow *mainWindow = new Widgets::MainWindow();
