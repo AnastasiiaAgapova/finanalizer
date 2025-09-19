@@ -30,7 +30,8 @@ protected slots:
 private:
     DatabaseModel *_model;
     Transactions::Database *_database;
-    PieChartBuilder *_builder;
+    PieChartBuilder *_incomeBuilder;
+    PieChartBuilder *_outcomeBuilder;
     DateRangeEdit *_dateRangeEdit;
 };
 }

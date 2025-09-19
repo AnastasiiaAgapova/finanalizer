@@ -15,7 +15,7 @@ PieChartBuilder::PieChartBuilder(Transactions::Database *database, PieChart *pie
     QObject::connect(_database, &Transactions::Database::changed, this, &PieChartBuilder::rebuild);
 }
 
-void PieChartBuilder::setFilter(std::unique_ptr<Transactions::Filter> filter)
+void PieChartBuilder::setFilter(std::shared_ptr<Transactions::Filter> filter)
 {
     _currentFilter = std::move(filter);
     rebuild();
@@ -32,9 +32,9 @@ void PieChartBuilder::rebuild()
     foreach (auto transaction, transactions)
     {
         if (categorySums.contains(transaction.category()))
-            categorySums[transaction.category()] += transaction.amount();
+            categorySums[transaction.category()] += abs(transaction.amount());
         else
-            categorySums.insert(transaction.category(), transaction.amount());
+            categorySums.insert(transaction.category(), abs(transaction.amount()));
     }
 
     _categorySeries->clear();

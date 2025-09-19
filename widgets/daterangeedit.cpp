@@ -29,6 +29,8 @@ void DateRangeEdit::setMaxDateRange(const QDate &minDate, const QDate &maxDate)
 {
     _startDateEdit->setDateRange(minDate, maxDate);
     _endDateEdit->setDateRange(minDate, maxDate);
+    _startDateEdit->setDate(minDate);
+    _endDateEdit->setDate(maxDate);
 }
 
 QDate DateRangeEdit::startDate() const

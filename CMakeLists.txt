@@ -33,6 +33,8 @@ add_executable(finanalizer
   widgets/daterangeedit.h widgets/daterangeedit.cpp
   appconfig.h appconfig.cpp
   transactions/databasestorage.h transactions/databasestorage.cpp
+  transactions/filters/type.h transactions/filters/type.cpp
+  transactions/filters/complex.h transactions/filters/complex.cpp
 
 )
 

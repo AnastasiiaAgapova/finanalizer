@@ -20,8 +20,8 @@ public:
     QDateTime dateTime() const;
     void setDateTime(const QDateTime &newDateTime);
 
-    uint amount() const;
-    void setAmount(uint newAmount);
+    int amount() const;
+    void setAmount(int newAmount);
 
     QString category() const;
     void setCategory(const QString &newCategory);
@@ -35,7 +35,7 @@ public:
 
 private:
     QDateTime _dateTime;
-    uint _amount = 0; // in minimal units e.g. pence
+    int _amount = 0; // in minimal units e.g. pence
     QString _category = 0;
     QString _description = 0;
     Type _type = INVALID;

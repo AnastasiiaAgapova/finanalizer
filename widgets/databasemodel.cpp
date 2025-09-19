@@ -1,5 +1,8 @@
 #include "databasemodel.h"
 
+#include <QBrush>
+#include <QColor>
+
 namespace Widgets
 {
 
@@ -19,9 +22,9 @@ namespace Widgets
     {
         if (_database)
         {
-            if (role == Qt::DisplayRole)
+            if (index.column() < COLUMN_COUNT && index.row() < _database->size())
             {
-                if (index.column() < COLUMN_COUNT && index.row() < _database->size())
+                if (role == Qt::DisplayRole)
                 {
                     const Transactions::Transaction transaction = _database->transactionAt(index.row());
                     switch (index.column()) {
@@ -35,6 +38,16 @@ namespace Widgets
                         return transaction.description();
                     default:
                         break;
+                    }
+                }
+                else if (role == Qt::ForegroundRole)
+                {
+                    const Transactions::Transaction transaction = _database->transactionAt(index.row());
+                    switch (transaction.type()) {
+                    case Transactions::Transaction::INCOME:
+                        return QVariant(QBrush(Qt::green));
+                    default:
+                        return QVariant(QBrush(Qt::red));;
                     }
                 }
             }

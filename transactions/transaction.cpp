@@ -14,12 +14,12 @@ void Transaction::setDateTime(const QDateTime &newDateTime)
     _dateTime = newDateTime;
 }
 
-uint Transaction::amount() const
+int Transaction::amount() const
 {
     return _amount;
 }
 
-void Transaction::setAmount(uint newAmount)
+void Transaction::setAmount(int newAmount)
 {
     _amount = newAmount;
 }

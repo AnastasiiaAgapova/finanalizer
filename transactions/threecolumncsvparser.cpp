@@ -31,7 +31,7 @@ QList<Transaction> ThreeColumnCsvParser::load(const QString &connectionString) c
             bool ok;
             double amount = stringList[2].toDouble(&ok);
             transaction.setType(amount < 0 ? Transaction::OUTCOME : Transaction::INCOME);
-            transaction.setAmount(abs(amount) * 100);
+            transaction.setAmount(amount * 100);
             if (!ok)
                 continue;
             transaction.setDateTime(QDateTime::fromString(stringList[0], "dd/MM/yyyy"));
