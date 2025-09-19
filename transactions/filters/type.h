@@ -12,9 +12,9 @@ class Type : public Filter
 public:
     Type(Transaction::Type type);
 
-    virtual ~Type() {}
+    ~Type() override {}
 
-    virtual bool isMatch(const Transaction &transaction) const;
+    virtual bool isMatch(const Transaction &transaction) const override;
 
 private:
     Transaction::Type _type;

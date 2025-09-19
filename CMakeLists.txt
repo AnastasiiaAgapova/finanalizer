@@ -35,6 +35,7 @@ add_executable(finanalizer
   transactions/databasestorage.h transactions/databasestorage.cpp
   transactions/filters/type.h transactions/filters/type.cpp
   transactions/filters/complex.h transactions/filters/complex.cpp
+  widgets/databesasortfilterproxymodel.h widgets/databesasortfilterproxymodel.cpp
 
 )
 

@@ -20,6 +20,8 @@
 #include "transactions/threecolumncsvparser.h"
 #include "transactions/simplecategorydetector.h"
 #include "transactions/databasestorage.h"
+#include "databasemodel.h"
+#include "widgets/databesasortfilterproxymodel.h"
 
 namespace Widgets
 {
@@ -37,10 +39,12 @@ PieChart *initializeChart()
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
     , _model(new DatabaseModel(this))
+    , _proxyModel(new DatabesaSortFilterProxyModel(this))
     , _database(new Transactions::Database(this))
 {
     _model->setDatabase(_database);
     QObject::connect(_database, &Transactions::Database::changed, this, &MainWindow::onDatabaseChaned);
+    _proxyModel->setSourceModel(_model);
 
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -56,8 +60,9 @@ MainWindow::MainWindow(QWidget *parent)
     QTableView *transactionsView = new QTableView(centralWidget);
     leftLayout->addWidget(transactionsView);
 
-    transactionsView->setModel(_model);
+    transactionsView->setModel(_proxyModel);
     transactionsView->horizontalHeader()->setStretchLastSection(true);
+    transactionsView->setSortingEnabled(true);
 
     QPushButton *addDataButton = new QPushButton("Add...", centralWidget);
     leftLayout->addWidget(addDataButton);
@@ -111,7 +116,7 @@ void MainWindow::addData()
 
     if (!filePathList.isEmpty())
     {
-        for (auto filePath : filePathList) {
+        for (auto &filePath : filePathList) {
             Transactions::ThreeColumnCsvParser parser;
             Transactions::SimpleCategoryDetector detector;
             parser.setCategoryDetector(&detector);
@@ -132,6 +137,8 @@ void MainWindow::onDateRangeChanged()
 
     _incomeBuilder->setFilter(std::make_shared<Transactions::Filters::Complex>(incomeFilters));
     _outcomeBuilder->setFilter(std::make_shared<Transactions::Filters::Complex>(outcomeFilters));
+
+    _proxyModel->setFilter(timeFilter);
 }
 
 void MainWindow::onDatabaseChaned()

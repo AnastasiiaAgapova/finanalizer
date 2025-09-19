@@ -13,8 +13,9 @@ class TimePeriod : public Filter
 {
 public:
     TimePeriod(const QDate &start, const QDate &end);
+    ~TimePeriod() override {}
 
-    virtual bool isMatch(const Transaction &transaction) const;
+    bool isMatch(const Transaction &transaction) const override;
 
 private:
     QDate _start;

@@ -2,11 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
-#include "databasemodel.h"
+namespace Transactions
+{
+class Database;
+}
 
 namespace Widgets
 {
+class DatabaseModel;
+class DatabesaSortFilterProxyModel;
 class PieChartBuilder;
 class DateRangeEdit;
 
@@ -29,6 +33,8 @@ protected slots:
 
 private:
     DatabaseModel *_model;
+    DatabesaSortFilterProxyModel *_proxyModel;
+
     Transactions::Database *_database;
     PieChartBuilder *_incomeBuilder;
     PieChartBuilder *_outcomeBuilder;

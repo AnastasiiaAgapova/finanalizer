@@ -11,8 +11,8 @@ class Category : public Filter
 {
 public:
     Category(const QString &category);
-
-    virtual bool isMatch(const Transaction &transaction) const;
+    ~Category() override {}
+    bool isMatch(const Transaction &transaction) const override;
 
 private:
     QString _category;

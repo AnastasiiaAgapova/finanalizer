@@ -10,9 +10,9 @@ class ThreeColumnCsvParser : public Connector
 {
 public:
     ThreeColumnCsvParser();
-    ~ThreeColumnCsvParser(){}
+    ~ThreeColumnCsvParser() override {}
 
-    QList<Transaction> load(const QString &connectionString) const;
+    QList<Transaction> load(const QString &connectionString) const override;
 
     void setCategoryDetector(CategoryDetector *newCategoryDetector);
 
