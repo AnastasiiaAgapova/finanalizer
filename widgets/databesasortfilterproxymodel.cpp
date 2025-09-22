@@ -25,7 +25,7 @@ bool DatabesaSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelI
         return true;
     else
     {
-        auto transaction = static_cast<Transactions::Transaction*>(sourceModel()->index(sourceRow, 0, sourceParent).internalPointer());
+        auto transaction = static_cast<std::shared_ptr<Transactions::Transaction>*>(sourceModel()->index(sourceRow, 0, sourceParent).internalPointer());
         return _filter->isMatch(*transaction);
     }
 }

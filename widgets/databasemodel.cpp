@@ -2,6 +2,9 @@
 
 #include <QBrush>
 #include <QColor>
+#include <QFont>
+
+#include "calculation/core.h"
 
 namespace Widgets
 {
@@ -9,6 +12,7 @@ namespace Widgets
     DatabaseModel::DatabaseModel(QObject *parent)
         : QAbstractItemModel(parent)
         , _database(nullptr)
+        , _calculationCore(nullptr)
     {
     }
 
@@ -26,29 +30,44 @@ namespace Widgets
             {
                 if (role == Qt::DisplayRole)
                 {
-                    const Transactions::Transaction transaction = _database->transactionAt(index.row());
+                    auto transaction = _database->transactionAt(index.row());
                     switch (index.column()) {
                     case Date:
-                        return transaction.dateTime().date();
+                        return transaction.get()->dateTime().date();
                     case Amount:
-                        return QString::number(transaction.amount() * 0.01, 'f', 2);
+                        return QString::number(transaction.get()->amount() * 0.01, 'f', 2);
                     case Category:
-                        return transaction.category();
+                        return transaction.get()->category();
                     case Description:
-                        return transaction.description();
+                        return transaction.get()->description();
                     default:
                         break;
                     }
                 }
                 else if (role == Qt::ForegroundRole)
                 {
-                    const Transactions::Transaction transaction = _database->transactionAt(index.row());
-                    switch (transaction.type()) {
+                    const auto &transaction = _database->transactionAt(index.row());
+                    switch (transaction.get()->type()) {
                     case Transactions::Transaction::INCOME:
                         return QVariant(QBrush(Qt::green));
+                    case Transactions::Transaction::OUTCOME:
+                        return QVariant(QBrush(Qt::red));
                     default:
-                        return QVariant(QBrush(Qt::red));;
+                        return QVariant(QBrush(Qt::black));
                     }
+                }
+                else if (role == Qt::FontRole)
+                {
+                    if (!_calculationCore)
+                        return QVariant();
+                    const auto &transaction = _database->transactionAt(index.row());
+                    if (_calculationCore && _calculationCore->isAnomaly(transaction))
+                    {
+                        QFont font;
+                        font.setBold(true);
+                        return font;
+                    }
+                    return QVariant();
                 }
             }
         }
@@ -97,10 +116,18 @@ namespace Widgets
         return QVariant();
     }
 
-    void DatabaseModel::onDatabaseChanged()
+    void DatabaseModel::updateModel()
     {
         beginResetModel();
         endResetModel();
+    }
+
+    void DatabaseModel::setCalculationCore(Calculation::Core *newCalculationCore)
+    {
+        if (_calculationCore)
+            QObject::disconnect(_calculationCore, nullptr, nullptr, nullptr);
+        _calculationCore = newCalculationCore;
+        QObject::connect(_calculationCore, &Calculation::Core::analyzed, this, &DatabaseModel::updateModel);
     }
 
     void DatabaseModel::setDatabase(Transactions::Database *newDatabase)
@@ -111,7 +138,7 @@ namespace Widgets
         _database = newDatabase;
         endResetModel();
 
-        QObject::connect(_database, &Transactions::Database::changed, this, &DatabaseModel::onDatabaseChanged);
+        QObject::connect(_database, &Transactions::Database::changed, this, &DatabaseModel::updateModel);
     }
 
 }

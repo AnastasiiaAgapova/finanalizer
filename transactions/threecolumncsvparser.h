@@ -12,7 +12,7 @@ public:
     ThreeColumnCsvParser();
     ~ThreeColumnCsvParser() override {}
 
-    QList<Transaction> load(const QString &connectionString) const override;
+    QVector<std::shared_ptr<Transaction>> load(const QString &connectionString) const override;
 
     void setCategoryDetector(CategoryDetector *newCategoryDetector);
 

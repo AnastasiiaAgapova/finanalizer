@@ -3,15 +3,15 @@
 
 #include <QString>
 
-#include "transaction.h"
 
 namespace Transactions
 {
+class Transaction;
 class Connector
 {
 public:
     virtual ~Connector() {};
-    virtual QList<Transaction> load(const QString &connectionString) const = 0;
+    virtual QVector<std::shared_ptr<Transaction>> load(const QString &connectionString) const = 0;
 };
 }
 #endif // CONNECTOR_H

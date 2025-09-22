@@ -6,6 +6,11 @@
 #include "transactions/database.h"
 #include "transactions/database.h"
 
+namespace Calculation
+{
+class Core;
+}
+
 namespace Widgets
 {
 class DatabaseModel : public QAbstractItemModel
@@ -34,11 +39,14 @@ public:
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+    void setCalculationCore(Calculation::Core *newCalculationCore);
+
 protected slots:
-    void onDatabaseChanged();
+    void updateModel();
 
 private:
     Transactions::Database *_database;
+    Calculation::Core *_calculationCore;
 };
 }
 

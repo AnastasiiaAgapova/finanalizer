@@ -9,10 +9,10 @@ namespace Filters
 
     }
 
-    bool Complex::isMatch(const Transaction &transaction) const
+    bool Complex::isMatch(const std::shared_ptr<Transaction> &transaction) const
     {
         for (auto &filter : _filters) {
-            if (!filter.get()->isMatch(transaction))
+            if (!filter->isMatch(transaction))
                 return false;
         }
         return true;

@@ -13,7 +13,7 @@ public:
     Complex(QList<std::shared_ptr<Filter>> filters);
     ~Complex() override {}
 
-    bool isMatch(const Transaction &transaction) const override;
+    bool isMatch(const std::shared_ptr<Transaction> &transaction) const override;
 
 private:
     QList<std::shared_ptr<Filter>> _filters;

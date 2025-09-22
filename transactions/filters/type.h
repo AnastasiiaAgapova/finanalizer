@@ -14,7 +14,7 @@ public:
 
     ~Type() override {}
 
-    virtual bool isMatch(const Transaction &transaction) const override;
+    virtual bool isMatch(const std::shared_ptr<Transaction> &transaction) const override;
 
 private:
     Transaction::Type _type;

@@ -12,7 +12,7 @@ class Category : public Filter
 public:
     Category(const QString &category);
     ~Category() override {}
-    bool isMatch(const Transaction &transaction) const override;
+    bool isMatch(const std::shared_ptr<Transaction> &transaction) const override;
 
 private:
     QString _category;

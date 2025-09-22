@@ -15,15 +15,16 @@ public:
     Database(QObject *parent = nullptr);
     ~Database();
 
-    void addTransaction(const Transaction &transaction);
-    void addTransactions(QList<Transaction> transactions);
+    void addTransaction(const std::shared_ptr<Transaction> &transaction);
+    void addTransactions(QVector<std::shared_ptr<Transaction>> transactions);
 
     int size() const;
 
-    QList<Transaction> transactions() const;
-    const Transaction &transactionAt(int index) const;
+    QVector<std::shared_ptr<Transaction>> transactions() const;
+    const std::shared_ptr<Transaction> &transactionAt(int index) const;
+    QMap<QString, QVector<std::shared_ptr<Transaction>>> categorizedTransactions() const;
 
-    QList<Transaction> filterTransactions(const Filter *filter) const;
+    QVector<std::shared_ptr<Transaction>> filterTransactions(const Filter *filter) const;
 
     QDate startDate() const;
     QDate endDate() const;
@@ -35,7 +36,7 @@ signals:
     void changed();
 
 private:
-    QList<Transaction> _transactions;
+    QVector<std::shared_ptr<Transaction>> _transactions;
 };
 
 }

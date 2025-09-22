@@ -11,7 +11,7 @@ public:
     SimpleCategoryDetector();
     ~SimpleCategoryDetector();
 
-    bool detect(Transaction &transaction) const;
+    bool detect(std::shared_ptr<Transaction> &transaction) const;
 };
 }
 

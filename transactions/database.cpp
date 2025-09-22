@@ -14,14 +14,14 @@ Database::~Database()
     clearDatabase();
 }
 
-void Database::addTransaction(const Transaction &transaction)
+void Database::addTransaction(const std::shared_ptr<Transaction> &transaction)
 {
     _transactions.append(transaction);
     sortDatabase();
     emit changed();
 }
 
-void Database::addTransactions(QList<Transaction> transactions)
+void Database::addTransactions(QVector<std::shared_ptr<Transaction>> transactions)
 {
     _transactions.append(transactions);
     sortDatabase();
@@ -33,19 +33,30 @@ int Database::size() const
     return _transactions.size();
 }
 
-QList<Transaction> Database::transactions() const
+QVector<std::shared_ptr<Transaction>> Database::transactions() const
 {
     return _transactions;
 }
 
-const Transaction &Database::transactionAt(int index) const
+const std::shared_ptr<Transaction> &Database::transactionAt(int index) const
 {
     return _transactions.at(index);
 }
 
-QList<Transaction> Database::filterTransactions(const Filter *filter) const
+QMap<QString, QVector<std::shared_ptr<Transaction>>> Database::categorizedTransactions() const
 {
-    QList<Transaction> res;
+    QMap<QString, QVector<std::shared_ptr<Transaction>>> res;
+    for (auto &transaction : _transactions)
+    {
+        res[transaction->category()].append(transaction);
+    }
+    return res;
+
+}
+
+QVector<std::shared_ptr<Transaction>> Database::filterTransactions(const Filter *filter) const
+{
+    QVector<std::shared_ptr<Transaction>> res;
     foreach (auto &transaction, _transactions)
         if (filter->isMatch(transaction))
             res.append(transaction);
@@ -57,7 +68,7 @@ QDate Database::startDate() const
     if (_transactions.empty())
         return QDate();
     else
-        return _transactions.first().dateTime().date();
+        return _transactions.first()->dateTime().date();
 }
 
 QDate Database::endDate() const
@@ -65,7 +76,7 @@ QDate Database::endDate() const
     if (_transactions.empty())
         return QDate();
     else
-        return _transactions.last().dateTime().date();
+        return _transactions.last()->dateTime().date();
 }
 
 void Database::clearDatabase()
@@ -76,8 +87,8 @@ void Database::clearDatabase()
 
 void Database::sortDatabase()
 {
-    std::sort(_transactions.begin(), _transactions.end(), [](const Transaction &a, const Transaction &b){
-        return a.dateTime() < b.dateTime();
+    std::sort(_transactions.begin(), _transactions.end(), [](const std::shared_ptr<Transaction> &a, const std::shared_ptr<Transaction> &b){
+        return a->dateTime() < b->dateTime();
     });
 }
 }

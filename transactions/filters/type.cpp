@@ -10,9 +10,9 @@ namespace Filters
 
     }
 
-    bool Type::isMatch(const Transaction &transaction) const
+    bool Type::isMatch(const std::shared_ptr<Transaction> &transaction) const
     {
-        return transaction.type() == _type;
+        return transaction->type() == _type;
     }
 }
 }

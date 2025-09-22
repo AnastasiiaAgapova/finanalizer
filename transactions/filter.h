@@ -9,7 +9,7 @@ namespace Transactions
     {
     public:
         virtual ~Filter() {}
-        virtual bool isMatch(const Transaction &transaction) const = 0;
+        virtual bool isMatch(const std::shared_ptr<Transaction> &transaction) const = 0;
     };
 }
 

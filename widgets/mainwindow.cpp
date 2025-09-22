@@ -22,6 +22,7 @@
 #include "transactions/databasestorage.h"
 #include "databasemodel.h"
 #include "widgets/databesasortfilterproxymodel.h"
+#include "calculation/core.h"
 
 namespace Widgets
 {
@@ -40,9 +41,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
     , _model(new DatabaseModel(this))
     , _proxyModel(new DatabesaSortFilterProxyModel(this))
+    , _calculationCore(new Calculation::Core (this))
     , _database(new Transactions::Database(this))
 {
     _model->setDatabase(_database);
+    _model->setCalculationCore(_calculationCore);
     QObject::connect(_database, &Transactions::Database::changed, this, &MainWindow::onDatabaseChaned);
     _proxyModel->setSourceModel(_model);
 
@@ -67,6 +70,10 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton *addDataButton = new QPushButton("Add...", centralWidget);
     leftLayout->addWidget(addDataButton);
     QObject::connect(addDataButton, SIGNAL(pressed()), this, SLOT(addData()));
+
+    QPushButton *analyzeButton = new QPushButton("Analyze", centralWidget);
+    leftLayout->addWidget(analyzeButton);
+    QObject::connect(analyzeButton, SIGNAL(pressed()), this, SLOT(analyze()));
 
     _dateRangeEdit = new DateRangeEdit(centralWidget);
     rightLayout->addWidget(_dateRangeEdit, 0, Qt::AlignLeft);
@@ -144,5 +151,10 @@ void MainWindow::onDateRangeChanged()
 void MainWindow::onDatabaseChaned()
 {
     _dateRangeEdit->setMaxDateRange(_database->startDate(), _database->endDate());
+}
+
+void MainWindow::analyze()
+{
+    _calculationCore->analyze(_database);
 }
 }

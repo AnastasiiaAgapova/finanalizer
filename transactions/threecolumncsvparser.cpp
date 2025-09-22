@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QTextStream>
 
+#include "transaction.h"
+
 namespace Transactions
 {
 ThreeColumnCsvParser::ThreeColumnCsvParser()
@@ -11,9 +13,9 @@ ThreeColumnCsvParser::ThreeColumnCsvParser()
 
 }
 
-QList<Transaction> ThreeColumnCsvParser::load(const QString &connectionString) const
+QVector<std::shared_ptr<Transaction>> ThreeColumnCsvParser::load(const QString &connectionString) const
 {
-    QList<Transaction> res;
+    QVector<std::shared_ptr<Transaction>> res;
     QFile file(connectionString);
     if (file.open(QFile::ReadOnly))
     {
@@ -27,15 +29,15 @@ QList<Transaction> ThreeColumnCsvParser::load(const QString &connectionString) c
 
             line = textStream.readLine();
 
-            Transaction transaction;
+            auto transaction = std::make_shared<Transaction>();
             bool ok;
             double amount = stringList[2].toDouble(&ok);
-            transaction.setType(amount < 0 ? Transaction::OUTCOME : Transaction::INCOME);
-            transaction.setAmount(amount * 100);
+            transaction->setType(amount < 0 ? Transaction::OUTCOME : Transaction::INCOME);
+            transaction->setAmount(amount * 100);
             if (!ok)
                 continue;
-            transaction.setDateTime(QDateTime::fromString(stringList[0], "dd/MM/yyyy"));
-            transaction.setDescription(stringList[1]);
+            transaction->setDateTime(QDateTime::fromString(stringList[0], "dd/MM/yyyy"));
+            transaction->setDescription(stringList[1]);
 
             if (_categoryDetector)
                 _categoryDetector->detect(transaction);

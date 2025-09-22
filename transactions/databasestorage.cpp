@@ -62,15 +62,15 @@ bool DatabaseStorage::save(const Database *database, const QString &fileName) co
         return false;
 
     QJsonArray transactionArray;
-    const QList<Transaction> &transactions = database->transactions();
+    auto transactions = database->transactions();
     for(const auto &transaction : transactions)
     {
         QJsonObject transactionObject;
-        transactionObject.insert(DATE_TIME_KEY, QJsonValue::fromVariant(transaction.dateTime().toString(DATE_TIME_FORMAT)));
-        transactionObject.insert(AMOUNT_KEY, QJsonValue::fromVariant(transaction.amount()));
-        transactionObject.insert(CATEGORY_KEY, QJsonValue::fromVariant(transaction.category()));
-        transactionObject.insert(DESCRIPTION_KEY, QJsonValue::fromVariant(transaction.description()));
-        transactionObject.insert(TYPE_KEY, QJsonValue::fromVariant(transactionTypeToString(transaction.type())));
+        transactionObject.insert(DATE_TIME_KEY, QJsonValue::fromVariant(transaction->dateTime().toString(DATE_TIME_FORMAT)));
+        transactionObject.insert(AMOUNT_KEY, QJsonValue::fromVariant(transaction->amount()));
+        transactionObject.insert(CATEGORY_KEY, QJsonValue::fromVariant(transaction->category()));
+        transactionObject.insert(DESCRIPTION_KEY, QJsonValue::fromVariant(transaction->description()));
+        transactionObject.insert(TYPE_KEY, QJsonValue::fromVariant(transactionTypeToString(transaction->type())));
 
         transactionArray.append(QJsonValue(transactionObject));
     }
@@ -102,16 +102,16 @@ bool DatabaseStorage::load(Database *database, const QString &fileName) const
     if (transactionsArray.isEmpty())
         return false;
     database->clearDatabase();
-    QList<Transaction> transactions;
+    QVector<std::shared_ptr<Transaction>> transactions;
     for (const auto value : transactionsArray)
     {
         const QJsonObject jsonObject = value.toObject();
-        Transaction transaction;
-        transaction.setDateTime(QDateTime::fromString(jsonObject.value(DATE_TIME_KEY).toString(), DATE_TIME_FORMAT));
-        transaction.setAmount(jsonObject.value(AMOUNT_KEY).toVariant().toUInt());
-        transaction.setCategory(jsonObject.value(CATEGORY_KEY).toString());
-        transaction.setDescription(jsonObject.value(DESCRIPTION_KEY).toString());
-        transaction.setType(stringToTransactionType(jsonObject.value(TYPE_KEY).toString()));
+        auto transaction = std::make_shared<Transaction>();
+        transaction->setDateTime(QDateTime::fromString(jsonObject.value(DATE_TIME_KEY).toString(), DATE_TIME_FORMAT));
+        transaction->setAmount(jsonObject.value(AMOUNT_KEY).toVariant().toUInt());
+        transaction->setCategory(jsonObject.value(CATEGORY_KEY).toString());
+        transaction->setDescription(jsonObject.value(DESCRIPTION_KEY).toString());
+        transaction->setType(stringToTransactionType(jsonObject.value(TYPE_KEY).toString()));
         transactions.append(transaction);
     }
     database->addTransactions(transactions);

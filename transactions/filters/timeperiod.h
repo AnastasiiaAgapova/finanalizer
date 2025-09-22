@@ -15,7 +15,7 @@ public:
     TimePeriod(const QDate &start, const QDate &end);
     ~TimePeriod() override {}
 
-    bool isMatch(const Transaction &transaction) const override;
+    bool isMatch(const std::shared_ptr<Transaction> &transaction) const override;
 
 private:
     QDate _start;
