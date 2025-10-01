@@ -2,11 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-namespace Calculation
-{
-class Core;
-}
-
 namespace Transactions
 {
 class Database;
@@ -40,7 +35,6 @@ protected slots:
 private:
     DatabaseModel *_model;
     DatabesaSortFilterProxyModel *_proxyModel;
-    Calculation::Core *_calculationCore;
 
     Transactions::Database *_database;
     PieChartBuilder *_incomeBuilder;

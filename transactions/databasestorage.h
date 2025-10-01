@@ -21,6 +21,8 @@ private:
     static const char* CATEGORY_KEY;
     static const char* DESCRIPTION_KEY;
     static const char* TYPE_KEY;
+    static const char* ANOMALY_STATUS_KEY;
+    static const char* ANOMALY_STATUS_SOURCE_KEY;
 
     static const char* DATE_TIME_FORMAT;
 

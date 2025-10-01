@@ -10,9 +10,23 @@ class Transaction
 public:
     enum Type
     {
-        INVALID = -1,
-        INCOME,
-        OUTCOME
+        Invalid = -1,
+        Income,
+        Outcome
+    };
+
+    enum AnomalyStatusSource
+    {
+        NotDefined,
+        Calculated,
+        UserDefined
+    };
+
+    enum AnomalyStatus
+    {
+        Undefined,
+        Normal,
+        Anomalous
     };
 
     Transaction();
@@ -33,12 +47,21 @@ public:
     Type type() const;
     void setType(Type newType);
 
+    AnomalyStatus anomalyStatus() const;
+    void setAnomalyStatus(AnomalyStatus newStatus);
+
+    AnomalyStatusSource anomalyStatusSource() const;
+    void setAnomalyStatusSource(AnomalyStatusSource newAnomalyStatusSource);
+
 private:
     QDateTime _dateTime;
     int _amount = 0; // in minimal units e.g. pence
     QString _category = 0;
     QString _description = 0;
-    Type _type = INVALID;
+    Type _type = Invalid;
+
+    AnomalyStatusSource _anomalyStatusSource = NotDefined;
+    AnomalyStatus _anomalyStatus = Undefined;
 };
 }
 

@@ -1,16 +1,13 @@
 #include "madanomalydetector.h"
 
 #include "transactions/database.h"
-#include "analyzedtransaction.h"
 
 namespace Calculation
 {
 MADAnomalyDetector::MADAnomalyDetector() {}
 
-QVector<std::shared_ptr<AnalyzedTransaction>> MADAnomalyDetector::analyze(const Transactions::Database *database)
+bool MADAnomalyDetector::analyze(const Transactions::Database *database)
 {
-    QVector<std::shared_ptr<AnalyzedTransaction>> res;
-
     auto categorizedTransactions = database->categorizedTransactions();
     for (auto it = categorizedTransactions.begin(); it != categorizedTransactions.end(); ++it)
     {
@@ -52,19 +49,17 @@ QVector<std::shared_ptr<AnalyzedTransaction>> MADAnomalyDetector::analyze(const 
         {
             for (auto &transaction : transactions)
             {
-                const double z_mad = 0.6745 * (transaction->amount() - median) / mad;
-
-                if (std::abs(z_mad) > _coefficient)
+                if (transaction->anomalyStatusSource() != Transactions::Transaction::UserDefined)
                 {
-                    auto analyzedTransaction = std::make_shared<AnalyzedTransaction>(transaction);
-                    analyzedTransaction->setStatus(Anomalous);
-                    analyzedTransaction->setScore(z_mad);
-                    res.append(analyzedTransaction);
+                    const double z_mad = 0.6745 * (transaction->amount() - median) / mad;
+
+                    transaction->setAnomalyStatus(std::abs(z_mad) > _coefficient ? Transactions::Transaction::Anomalous : Transactions::Transaction::Normal);
+                    transaction->setAnomalyStatusSource(Transactions::Transaction::Calculated);
                 }
             }
         }
     }
-    return res;
+    return true;
 }
 
 void MADAnomalyDetector::setCoefficient(double newCoefficient)

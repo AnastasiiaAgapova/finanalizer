@@ -32,7 +32,7 @@ QVector<std::shared_ptr<Transaction>> ThreeColumnCsvParser::load(const QString &
             auto transaction = std::make_shared<Transaction>();
             bool ok;
             double amount = stringList[2].toDouble(&ok);
-            transaction->setType(amount < 0 ? Transaction::OUTCOME : Transaction::INCOME);
+            transaction->setType(amount < 0 ? Transaction::Outcome : Transaction::Income);
             transaction->setAmount(amount * 100);
             if (!ok)
                 continue;

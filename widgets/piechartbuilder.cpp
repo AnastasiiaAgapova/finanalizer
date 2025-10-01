@@ -12,6 +12,7 @@ PieChartBuilder::PieChartBuilder(Transactions::Database *database, PieChart *pie
     , _pieChart(pieChart)
     , _categorySeries(new QPieSeries(this))
 {
+    _pieChart->addSeries(_categorySeries);
     QObject::connect(_database, &Transactions::Database::changed, this, &PieChartBuilder::rebuild);
 }
 
@@ -40,8 +41,6 @@ void PieChartBuilder::rebuild()
     _categorySeries->clear();
     for (auto it = categorySums.begin(); it != categorySums.end(); ++it)
         *_categorySeries << new NamedPieSlice(it.value(), it.key());
-
-    _pieChart->addSeries(_categorySeries);
 
 }
 }

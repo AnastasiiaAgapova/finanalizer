@@ -37,8 +37,8 @@ add_executable(finanalizer
   transactions/filters/complex.h transactions/filters/complex.cpp
   widgets/databesasortfilterproxymodel.h widgets/databesasortfilterproxymodel.cpp
   calculation/anomalydetector.h
-  calculation/core.h calculation/core.cpp
-  calculation/analyzedtransaction.h calculation/analyzedtransaction.cpp
+
+
   calculation/varianceanomalydetector.h calculation/varianceanomalydetector.cpp
   calculation/madanomalydetector.h calculation/madanomalydetector.cpp
 

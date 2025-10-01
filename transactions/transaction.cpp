@@ -53,4 +53,24 @@ void Transaction::setType(Type newType)
 {
     _type = newType;
 }
+
+Transaction::AnomalyStatus Transaction::anomalyStatus() const
+{
+    return _anomalyStatus;
+}
+
+void Transaction::setAnomalyStatus(AnomalyStatus newStatus)
+{
+    _anomalyStatus = newStatus;
+}
+
+Transaction::AnomalyStatusSource Transaction::anomalyStatusSource() const
+{
+    return _anomalyStatusSource;
+}
+
+void Transaction::setAnomalyStatusSource(AnomalyStatusSource newAnomalyStatusSource)
+{
+    _anomalyStatusSource = newAnomalyStatusSource;
+}
 }

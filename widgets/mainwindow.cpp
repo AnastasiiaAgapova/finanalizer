@@ -22,7 +22,7 @@
 #include "transactions/databasestorage.h"
 #include "databasemodel.h"
 #include "widgets/databesasortfilterproxymodel.h"
-#include "calculation/core.h"
+#include "calculation/madanomalydetector.h"
 
 namespace Widgets
 {
@@ -41,11 +41,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
     , _model(new DatabaseModel(this))
     , _proxyModel(new DatabesaSortFilterProxyModel(this))
-    , _calculationCore(new Calculation::Core (this))
     , _database(new Transactions::Database(this))
 {
     _model->setDatabase(_database);
-    _model->setCalculationCore(_calculationCore);
     QObject::connect(_database, &Transactions::Database::changed, this, &MainWindow::onDatabaseChaned);
     _proxyModel->setSourceModel(_model);
 
@@ -136,10 +134,10 @@ void MainWindow::onDateRangeChanged()
 {
     auto timeFilter = std::make_shared<Transactions::Filters::TimePeriod>(_dateRangeEdit->startDate(), _dateRangeEdit->endDate());
     QList<std::shared_ptr<Transactions::Filter>> incomeFilters;
-    incomeFilters << std::make_unique<Transactions::Filters::Type>(Transactions::Transaction::INCOME)
+    incomeFilters << std::make_unique<Transactions::Filters::Type>(Transactions::Transaction::Income)
                   << timeFilter;
     QList<std::shared_ptr<Transactions::Filter>> outcomeFilters;
-    outcomeFilters << std::make_unique<Transactions::Filters::Type>(Transactions::Transaction::OUTCOME)
+    outcomeFilters << std::make_unique<Transactions::Filters::Type>(Transactions::Transaction::Outcome)
                   << timeFilter;
 
     _incomeBuilder->setFilter(std::make_shared<Transactions::Filters::Complex>(incomeFilters));
@@ -155,6 +153,8 @@ void MainWindow::onDatabaseChaned()
 
 void MainWindow::analyze()
 {
-    _calculationCore->analyze(_database);
+    Calculation::MADAnomalyDetector detector;
+    detector.analyze(_database);
+    emit _database->changed();
 }
 }

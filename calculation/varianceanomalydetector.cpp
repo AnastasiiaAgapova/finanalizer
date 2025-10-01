@@ -1,16 +1,13 @@
 #include "varianceanomalydetector.h"
 
 #include "transactions/database.h"
-#include "analyzedtransaction.h"
 
 namespace Calculation
 {
 VarianceAnomalyDetector::VarianceAnomalyDetector() {}
 
-QVector<std::shared_ptr<AnalyzedTransaction>> VarianceAnomalyDetector::analyze(const Transactions::Database *database)
+bool VarianceAnomalyDetector::analyze(const Transactions::Database *database)
 {
-    QVector<std::shared_ptr<AnalyzedTransaction>> res;
-
     auto categorizedTransactions = database->categorizedTransactions();
     for (auto it = categorizedTransactions.begin(); it != categorizedTransactions.end(); ++it)
     {
@@ -30,18 +27,17 @@ QVector<std::shared_ptr<AnalyzedTransaction>> VarianceAnomalyDetector::analyze(c
         {
             for (auto &transaction : transactions)
             {
-                const double z = (transaction->amount() - mu) / sigma;
-                if (abs(z) > _coefficient)
+                if (transaction->anomalyStatusSource() != Transactions::Transaction::UserDefined)
                 {
-                    auto analyzedTransaction = std::make_shared<AnalyzedTransaction>(transaction);
-                    analyzedTransaction->setStatus(Anomalous);
-                    analyzedTransaction->setScore(z);
-                    res.append(analyzedTransaction);
+                    const double z = (transaction->amount() - mu) / sigma;
+
+                    transaction->setAnomalyStatus(std::abs(z) > _coefficient ? Transactions::Transaction::Anomalous : Transactions::Transaction::Normal);
+                    transaction->setAnomalyStatusSource(Transactions::Transaction::Calculated);
                 }
             }
         }
     }
-    return res;
+    return true;
 }
 
 void VarianceAnomalyDetector::setCoefficient(double newCoefficient)

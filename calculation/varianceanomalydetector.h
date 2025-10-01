@@ -10,7 +10,7 @@ class VarianceAnomalyDetector : public AnomalyDetector
 public:
     VarianceAnomalyDetector();
     ~VarianceAnomalyDetector() override {};
-    virtual QVector<std::shared_ptr<AnalyzedTransaction>> analyze(const Transactions::Database *database) override;
+    virtual bool analyze(const Transactions::Database *database) override;
 
     void setCoefficient(double newCoefficient);
 

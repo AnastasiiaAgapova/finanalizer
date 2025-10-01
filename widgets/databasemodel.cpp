@@ -4,15 +4,12 @@
 #include <QColor>
 #include <QFont>
 
-#include "calculation/core.h"
-
 namespace Widgets
 {
 
     DatabaseModel::DatabaseModel(QObject *parent)
         : QAbstractItemModel(parent)
         , _database(nullptr)
-        , _calculationCore(nullptr)
     {
     }
 
@@ -24,14 +21,15 @@ namespace Widgets
 
     QVariant DatabaseModel::data(const QModelIndex &index, int role) const
     {
-        if (_database)
+        if (_database && index.isValid())
         {
             if (index.column() < COLUMN_COUNT && index.row() < _database->size())
             {
+                auto transaction = _database->transactionAt(index.row());
                 if (role == Qt::DisplayRole)
                 {
-                    auto transaction = _database->transactionAt(index.row());
-                    switch (index.column()) {
+                    switch (index.column())
+                    {
                     case Date:
                         return transaction.get()->dateTime().date();
                     case Amount:
@@ -46,32 +44,49 @@ namespace Widgets
                 }
                 else if (role == Qt::ForegroundRole)
                 {
-                    const auto &transaction = _database->transactionAt(index.row());
-                    switch (transaction.get()->type()) {
-                    case Transactions::Transaction::INCOME:
+                    switch (transaction.get()->type())
+                    {
+                    case Transactions::Transaction::Income:
                         return QVariant(QBrush(Qt::green));
-                    case Transactions::Transaction::OUTCOME:
+                    case Transactions::Transaction::Outcome:
                         return QVariant(QBrush(Qt::red));
                     default:
                         return QVariant(QBrush(Qt::black));
                     }
                 }
-                else if (role == Qt::FontRole)
+                else if (role == Qt::CheckStateRole)
                 {
-                    if (!_calculationCore)
-                        return QVariant();
-                    const auto &transaction = _database->transactionAt(index.row());
-                    if (_calculationCore && _calculationCore->isAnomaly(transaction))
+                    switch (index.column())
                     {
-                        QFont font;
-                        font.setBold(true);
-                        return font;
+                    case IsAnomaly:
+                        if (transaction->anomalyStatus() == Transactions::Transaction::Anomalous)
+                        {
+                            if (transaction->anomalyStatusSource() == Transactions::Transaction::UserDefined)
+                                return Qt::Checked;
+                            else if (transaction->anomalyStatusSource() == Transactions::Transaction::Calculated)
+                                return Qt::PartiallyChecked;
+                        }
+                        return Qt::Unchecked;
+                    default:
+                        break;
                     }
-                    return QVariant();
                 }
             }
         }
         return QVariant();
+    }
+
+    bool DatabaseModel::setData(const QModelIndex &index, const QVariant &value, int role)
+    {
+        if (index.isValid() && index.column() == IsAnomaly)
+        {
+            auto transaction = _database->transactionAt(index.row());
+            transaction->setAnomalyStatus(value.toBool() ? Transactions::Transaction::Anomalous : Transactions::Transaction::Normal);
+            transaction->setAnomalyStatusSource(Transactions::Transaction::UserDefined);
+            emit dataChanged(index, index);
+            return true;
+        }
+        return QAbstractItemModel::setData(index, value, role);
     }
 
     QModelIndex DatabaseModel::index(int row, int column, const QModelIndex &parent) const
@@ -100,18 +115,33 @@ namespace Widgets
         return QModelIndex();
     }
 
+    Qt::ItemFlags DatabaseModel::flags(const QModelIndex &index) const
+    {
+        Qt::ItemFlags res = QAbstractItemModel::flags(index);
+        if (index.isValid() && index.column() == IsAnomaly)
+            res |= Qt::ItemIsUserCheckable;
+        return res;
+    }
+
     QVariant DatabaseModel::headerData(int section, Qt::Orientation orientation, int role) const
     {
         if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
         {
-            if (section == Date)
+            switch(section)
+            {
+            case Date:
                 return "Date";
-            else if (section == Amount)
+            case Amount:
                 return "Amount";
-            else if (section == Category)
+            case Category:
                 return "Category";
-            else if (section == Description)
+            case Description:
                 return "Description";
+            case IsAnomaly:
+                return "Is anomaly";
+            default:
+                return QString();
+            }
         }
         return QVariant();
     }
@@ -120,14 +150,6 @@ namespace Widgets
     {
         beginResetModel();
         endResetModel();
-    }
-
-    void DatabaseModel::setCalculationCore(Calculation::Core *newCalculationCore)
-    {
-        if (_calculationCore)
-            QObject::disconnect(_calculationCore, nullptr, nullptr, nullptr);
-        _calculationCore = newCalculationCore;
-        QObject::connect(_calculationCore, &Calculation::Core::analyzed, this, &DatabaseModel::updateModel);
     }
 
     void DatabaseModel::setDatabase(Transactions::Database *newDatabase)

@@ -10,7 +10,7 @@ class MADAnomalyDetector : public AnomalyDetector
 public:
     MADAnomalyDetector();
     ~MADAnomalyDetector() override {};
-    virtual QVector<std::shared_ptr<AnalyzedTransaction>> analyze(const Transactions::Database *database) override;
+    virtual bool analyze(const Transactions::Database *database) override;
 
     void setCoefficient(double newCoefficient);
 

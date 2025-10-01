@@ -15,7 +15,7 @@ class AnomalyDetector
 {
 public:
     virtual ~AnomalyDetector() {};
-    virtual QVector<std::shared_ptr<AnalyzedTransaction>> analyze(const Transactions::Database * database) = 0;
+    virtual bool analyze(const Transactions::Database * database) = 0;
 };
 }
 #endif // ANOMALYDETECTOR_H

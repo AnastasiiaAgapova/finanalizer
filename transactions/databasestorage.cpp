@@ -15,25 +15,31 @@ const char* DatabaseStorage::AMOUNT_KEY = "amount";
 const char* DatabaseStorage::CATEGORY_KEY = "category";
 const char* DatabaseStorage::DESCRIPTION_KEY = "description";
 const char* DatabaseStorage::TYPE_KEY = "type";
+const char* DatabaseStorage::ANOMALY_STATUS_KEY = "anomalyStatus";
+const char* DatabaseStorage::ANOMALY_STATUS_SOURCE_KEY = "anomalyStatusSource";
 const char* DatabaseStorage::DATE_TIME_FORMAT = "dd.MM.yyyy";
 
 static const char* INVALID_TYPE = "Invalid";
 static const char* INCOME_TYPE = "Income";
 static const char* OUTCOME_TYPE = "Outcome";
 
+static const char* UNDEFINED_STATUS = "Undefined";
+static const char* ANOMALOUS_STATUS = "Anomalous";
+static const char* NORMAL_STATUS = "Normal";
+static const char* UNDEFINED_SOURCE = "Undefined";
+static const char* CALCULATED_SOURCE = "Calculated";
+static const char* USER_DEFINED_SOURCE = "User defined";
+
 QString transactionTypeToString(const Transaction::Type &type)
 {
     switch (type)
     {
-    case Transaction::INVALID:
+    case Transaction::Invalid:
         return INVALID_TYPE;
-        break;
-    case Transaction::INCOME:
+    case Transaction::Income:
         return INCOME_TYPE;
-        break;
-    case Transaction::OUTCOME:
+    case Transaction::Outcome:
         return OUTCOME_TYPE;
-        break;
     }
     return QString();
 }
@@ -42,13 +48,67 @@ Transaction::Type stringToTransactionType(const QString &type)
 {
     if (type == INCOME_TYPE)
     {
-        return Transaction::INCOME;
+        return Transaction::Income;
     }
     else if (type == OUTCOME_TYPE)
     {
-        return Transaction::OUTCOME;
+        return Transaction::Outcome;
     }
-    return Transaction::INVALID;
+    return Transaction::Invalid;
+}
+
+QString anomalyStatusToString(const Transaction::AnomalyStatus &anomalyStatus)
+{
+    switch (anomalyStatus)
+    {
+    case Transaction::Undefined:
+        return UNDEFINED_STATUS;
+    case Transaction::Normal:
+        return NORMAL_STATUS;
+    case Transaction::Anomalous:
+        return ANOMALOUS_STATUS;
+    }
+    return QString();
+}
+
+Transaction::AnomalyStatus stringToAnomalyStatus(const QString &type)
+{
+    if (type == ANOMALOUS_STATUS)
+    {
+        return Transaction::Anomalous;
+    }
+    else if (type == NORMAL_STATUS)
+    {
+        return Transaction::Normal;
+    }
+    return Transaction::Undefined;
+}
+
+QString anomalyStatusSourceToString(const Transaction::AnomalyStatusSource &source)
+{
+    switch (source)
+    {
+    case Transaction::NotDefined:
+        return UNDEFINED_SOURCE;
+    case Transaction::Calculated:
+        return CALCULATED_SOURCE;
+    case Transaction::UserDefined:
+        return USER_DEFINED_SOURCE;
+    }
+    return QString();
+}
+
+Transaction::AnomalyStatusSource stringToAnomalyStatusSource(const QString &type)
+{
+    if (type == CALCULATED_SOURCE)
+    {
+        return Transaction::Calculated;
+    }
+    else if (type == USER_DEFINED_SOURCE)
+    {
+        return Transaction::UserDefined;
+    }
+    return Transaction::NotDefined;
 }
 
 DatabaseStorage::DatabaseStorage() {}
@@ -62,7 +122,7 @@ bool DatabaseStorage::save(const Database *database, const QString &fileName) co
         return false;
 
     QJsonArray transactionArray;
-    auto transactions = database->transactions();
+    const auto transactions = database->transactions();
     for(const auto &transaction : transactions)
     {
         QJsonObject transactionObject;
@@ -71,6 +131,8 @@ bool DatabaseStorage::save(const Database *database, const QString &fileName) co
         transactionObject.insert(CATEGORY_KEY, QJsonValue::fromVariant(transaction->category()));
         transactionObject.insert(DESCRIPTION_KEY, QJsonValue::fromVariant(transaction->description()));
         transactionObject.insert(TYPE_KEY, QJsonValue::fromVariant(transactionTypeToString(transaction->type())));
+        transactionObject.insert(ANOMALY_STATUS_KEY, QJsonValue::fromVariant(anomalyStatusToString(transaction->anomalyStatus())));
+        transactionObject.insert(ANOMALY_STATUS_SOURCE_KEY, QJsonValue::fromVariant(anomalyStatusSourceToString(transaction->anomalyStatusSource())));
 
         transactionArray.append(QJsonValue(transactionObject));
     }
@@ -112,6 +174,8 @@ bool DatabaseStorage::load(Database *database, const QString &fileName) const
         transaction->setCategory(jsonObject.value(CATEGORY_KEY).toString());
         transaction->setDescription(jsonObject.value(DESCRIPTION_KEY).toString());
         transaction->setType(stringToTransactionType(jsonObject.value(TYPE_KEY).toString()));
+        transaction->setAnomalyStatus(stringToAnomalyStatus(jsonObject.value(ANOMALY_STATUS_KEY).toString()));
+        transaction->setAnomalyStatusSource(stringToAnomalyStatusSource(jsonObject.value(ANOMALY_STATUS_SOURCE_KEY).toString()));
         transactions.append(transaction);
     }
     database->addTransactions(transactions);
