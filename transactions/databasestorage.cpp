@@ -19,6 +19,10 @@ const char* DatabaseStorage::ANOMALY_STATUS_KEY = "anomalyStatus";
 const char* DatabaseStorage::ANOMALY_STATUS_SOURCE_KEY = "anomalyStatusSource";
 const char* DatabaseStorage::DATE_TIME_FORMAT = "dd.MM.yyyy";
 
+const char* DatabaseStorage::CATEGORIES_KEY = "Categories";
+const char* DatabaseStorage::CATEGORY_NAME_KEY = "Name";
+const char* DatabaseStorage::CATEGORY_NUM_KEY = "Num";
+
 static const char* INVALID_TYPE = "Invalid";
 static const char* INCOME_TYPE = "Income";
 static const char* OUTCOME_TYPE = "Outcome";
@@ -121,6 +125,21 @@ bool DatabaseStorage::save(const Database *database, const QString &fileName) co
     if (!file.open(QIODevice::WriteOnly))
         return false;
 
+    QJsonObject databaseObject;
+
+    QJsonArray categoriesArray;
+    const auto categories = database->categories();
+    for (auto it = categories.constBegin(); it != categories.constEnd(); ++it)
+    {
+        QJsonObject categoryObject;
+        categoryObject.insert(CATEGORY_NAME_KEY, QJsonValue::fromVariant(it.key()));
+        categoryObject.insert(CATEGORY_NUM_KEY, QJsonValue::fromVariant(it.value()));
+
+        categoriesArray.append(categoryObject);
+    }
+
+    databaseObject.insert(CATEGORIES_KEY, QJsonValue(categoriesArray));
+
     QJsonArray transactionArray;
     const auto transactions = database->transactions();
     for(const auto &transaction : transactions)
@@ -136,7 +155,7 @@ bool DatabaseStorage::save(const Database *database, const QString &fileName) co
 
         transactionArray.append(QJsonValue(transactionObject));
     }
-    QJsonObject databaseObject;
+
     databaseObject.insert(TRANSACTIONS_KEY, QJsonValue(transactionArray));
 
     file.write(QJsonDocument(databaseObject).toJson());
@@ -160,10 +179,20 @@ bool DatabaseStorage::load(Database *database, const QString &fileName) const
     if (jsonDocument.isNull())
         return false;
 
+    const QJsonArray categoriesArray = jsonDocument.object().value(CATEGORIES_KEY).toArray();
     const QJsonArray transactionsArray = jsonDocument.object().value(TRANSACTIONS_KEY).toArray();
     if (transactionsArray.isEmpty())
         return false;
     database->clearDatabase();
+
+    QMap<QString, uint> categories;
+    for (const auto value : categoriesArray)
+    {
+        const QJsonObject jsonObject = value.toObject();
+        categories.insert(jsonObject.value(CATEGORY_NAME_KEY).toString(), static_cast<uint>(jsonObject.value(CATEGORY_NUM_KEY).toInt()));
+    }
+    database->setCategories(categories);
+
     QVector<std::shared_ptr<Transaction>> transactions;
     for (const auto value : transactionsArray)
     {

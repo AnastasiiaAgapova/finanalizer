@@ -9,10 +9,15 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(ONNXRUNTIME_DIR "C:/workspace/libs/onnxruntime-win-x64-1.22.1")
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Charts)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Charts)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+include_directories(${ONNXRUNTIME_DIR}/include)
+link_directories(${ONNXRUNTIME_DIR}/lib)
 
 add_executable(finanalizer
   main.cpp
@@ -41,13 +46,18 @@ add_executable(finanalizer
 
   calculation/varianceanomalydetector.h calculation/varianceanomalydetector.cpp
   calculation/madanomalydetector.h calculation/madanomalydetector.cpp
+  calculation/aimodel.h calculation/aimodel.cpp
+  calculation/aimodelanomalydetector.h calculation/aimodelanomalydetector.cpp
+  calculation/dataformodelencoder.h calculation/dataformodelencoder.cpp
+
 
 )
 
 target_include_directories(finanalizer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(finanalizer PRIVATE Qt${QT_VERSION_MAJOR}::Core
                                           Qt${QT_VERSION_MAJOR}::Widgets
-                                          Qt${QT_VERSION_MAJOR}::Charts)
+                                          Qt${QT_VERSION_MAJOR}::Charts
+                                          onnxruntime)
 target_link_libraries(finanalizer PRIVATE Qt6::Widgets)
 
 include(GNUInstallDirs)

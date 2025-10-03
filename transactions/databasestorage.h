@@ -24,6 +24,10 @@ private:
     static const char* ANOMALY_STATUS_KEY;
     static const char* ANOMALY_STATUS_SOURCE_KEY;
 
+    static const char* CATEGORIES_KEY;
+    static const char* CATEGORY_NAME_KEY;
+    static const char* CATEGORY_NUM_KEY;
+
     static const char* DATE_TIME_FORMAT;
 
 };

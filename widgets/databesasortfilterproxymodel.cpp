@@ -35,6 +35,8 @@ bool DatabesaSortFilterProxyModel::lessThan(const QModelIndex &left, const QMode
     QVariant leftData = sourceModel()->data(left);
     QVariant rightData = sourceModel()->data(right);
 
+
+
     switch (left.column()) {
     case DatabaseModel::Date:
         return leftData.toDateTime() < rightData.toDateTime();
@@ -43,6 +45,12 @@ bool DatabesaSortFilterProxyModel::lessThan(const QModelIndex &left, const QMode
     case DatabaseModel::Category:
     case DatabaseModel::Description:
         return leftData.toString() < rightData.toString();
+    case DatabaseModel::IsAnomaly:
+    {
+        QVariant leftCheckedData = left.data(Qt::CheckStateRole);
+        QVariant rightCheckedData = right.data(Qt::CheckStateRole);
+        return leftCheckedData.toInt() < rightCheckedData.toInt();
+    }
     default:
         return true;
     }

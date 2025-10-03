@@ -23,6 +23,9 @@
 #include "databasemodel.h"
 #include "widgets/databesasortfilterproxymodel.h"
 #include "calculation/madanomalydetector.h"
+#include "calculation/aimodel.h"
+#include "calculation/aimodelanomalydetector.h"
+#include "calculation/dataformodelencoder.h"
 
 namespace Widgets
 {
@@ -69,9 +72,17 @@ MainWindow::MainWindow(QWidget *parent)
     leftLayout->addWidget(addDataButton);
     QObject::connect(addDataButton, SIGNAL(pressed()), this, SLOT(addData()));
 
-    QPushButton *analyzeButton = new QPushButton("Analyze", centralWidget);
-    leftLayout->addWidget(analyzeButton);
-    QObject::connect(analyzeButton, SIGNAL(pressed()), this, SLOT(analyze()));
+    QPushButton *analyzeUsingMADButton = new QPushButton("Analyze using MAD", centralWidget);
+    leftLayout->addWidget(analyzeUsingMADButton);
+    QObject::connect(analyzeUsingMADButton, SIGNAL(pressed()), this, SLOT(analyzeUsingMAD()));
+
+    QPushButton *createModelButton = new QPushButton("Create AI model", centralWidget);
+    leftLayout->addWidget(createModelButton);
+    QObject::connect(createModelButton, SIGNAL(pressed()), this, SLOT(createAiModel()));
+
+    QPushButton *analyzeUsingAi = new QPushButton("Analyze using AI", centralWidget);
+    leftLayout->addWidget(analyzeUsingAi);
+    QObject::connect(analyzeUsingAi, SIGNAL(pressed()), this, SLOT(analyzeUsingAi()));
 
     _dateRangeEdit = new DateRangeEdit(centralWidget);
     rightLayout->addWidget(_dateRangeEdit, 0, Qt::AlignLeft);
@@ -151,10 +162,31 @@ void MainWindow::onDatabaseChaned()
     _dateRangeEdit->setMaxDateRange(_database->startDate(), _database->endDate());
 }
 
-void MainWindow::analyze()
+void MainWindow::analyzeUsingMAD()
 {
     Calculation::MADAnomalyDetector detector;
     detector.analyze(_database);
     emit _database->changed();
+}
+
+void MainWindow::createAiModel()
+{
+    if (!_aiModel)
+        _aiModel = std::make_shared<Calculation::AiModel>(AppConfig::instance().aiModelPath(),
+                                                          AppConfig::instance().trainModelScriptPath(),
+                                                          AppConfig::instance().transactionsForAiModelPath());
+    Calculation::DataForModelEncoder encoder;
+    encoder.save(_database, _database->transactions(), AppConfig::instance().transactionsForAiModelPath());
+    _aiModel->trainModel();
+}
+
+void MainWindow::analyzeUsingAi()
+{
+    if (!_aiModel)
+        _aiModel = std::make_shared<Calculation::AiModel>(AppConfig::instance().aiModelPath(),
+                                                          AppConfig::instance().trainModelScriptPath(),
+                                                          AppConfig::instance().transactionsForAiModelPath());
+    Calculation::AiModelAnomalyDetector detector(_aiModel);
+    detector.analyze(_database);
 }
 }

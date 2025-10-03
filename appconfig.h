@@ -9,8 +9,19 @@ public:
     static AppConfig &instance();
 
     QString databasePath() const;
-
     void setDatabasePath(const QString &path);
+
+    QString trainModelScriptPath() const;
+    void setTrainModelScriptPath(const QString &path);
+
+    QString aiModelPath() const;
+    void setAiModelPath(const QString &name);
+
+    QString transactionsForAiModelPath() const;
+    void setTransactionsForAiModelPath(const QString &name);
+
+    QString pythonPath() const;
+    void setPythonPath(const QString pythonPath);
 
 private:
     AppConfig();

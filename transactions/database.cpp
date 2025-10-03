@@ -5,7 +5,7 @@
 namespace Transactions
 {
 
-
+const uint Database::InvalidCategoryNum = std::numeric_limits<uint>().max();
 
 Database::Database(QObject *parent) : QObject(parent) {}
 
@@ -17,6 +17,7 @@ Database::~Database()
 void Database::addTransaction(const std::shared_ptr<Transaction> &transaction)
 {
     _transactions.append(transaction);
+    checkAndUpdateCategories(transaction->category());
     sortDatabase();
     emit changed();
 }
@@ -24,6 +25,8 @@ void Database::addTransaction(const std::shared_ptr<Transaction> &transaction)
 void Database::addTransactions(QVector<std::shared_ptr<Transaction>> transactions)
 {
     _transactions.append(transactions);
+    for (auto &transaction : transactions)
+        checkAndUpdateCategories(transaction->category());
     sortDatabase();
     emit changed();
 }
@@ -90,5 +93,34 @@ void Database::sortDatabase()
     std::sort(_transactions.begin(), _transactions.end(), [](const std::shared_ptr<Transaction> &a, const std::shared_ptr<Transaction> &b){
         return a->dateTime() < b->dateTime();
     });
+}
+
+uint Database::getCategoryNum(const QString &category) const
+{
+    if (_categories.contains(category))
+        return _categories[category];
+    else
+        return InvalidCategoryNum;
+}
+
+uint Database::checkAndUpdateCategories(const QString &category)
+{
+    if (!_categories.contains(category))
+    {
+        const auto values = _categories.values();
+        _categories.insert(category, values.isEmpty() ? 1 : *(std::max_element(values.begin(), values.end())) + 1);
+
+    }
+    return _categories[category];
+}
+
+QMap<QString, uint> Database::categories() const
+{
+    return _categories;
+}
+
+void Database::setCategories(const QMap<QString, uint> &categories)
+{
+    _categories = categories;
 }
 }

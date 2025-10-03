@@ -73,4 +73,5 @@ void Transaction::setAnomalyStatusSource(AnomalyStatusSource newAnomalyStatusSou
 {
     _anomalyStatusSource = newAnomalyStatusSource;
 }
+
 }

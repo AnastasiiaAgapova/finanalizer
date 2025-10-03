@@ -56,8 +56,8 @@ public:
 private:
     QDateTime _dateTime;
     int _amount = 0; // in minimal units e.g. pence
-    QString _category = 0;
-    QString _description = 0;
+    QString _category;
+    QString _description;
     Type _type = Invalid;
 
     AnomalyStatusSource _anomalyStatusSource = NotDefined;

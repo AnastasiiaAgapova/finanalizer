@@ -32,11 +32,22 @@ public:
     void clearDatabase();
     void sortDatabase();
 
+    uint getCategoryNum(const QString &category) const;
+
+    QMap<QString, uint> categories() const;
+    void setCategories(const QMap<QString, uint> &categories);
+
+    static const uint InvalidCategoryNum;
+
 signals:
     void changed();
 
+protected:
+    uint checkAndUpdateCategories(const QString &category);
+
 private:
     QVector<std::shared_ptr<Transaction>> _transactions;
+    QMap<QString, uint> _categories;
 };
 
 }
